@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}GitHub 仓库管理{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.8/dist/index.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.8/theme-chalk/dark/css-vars.css"
+    crossorigin="anonymous">
+  {% block head_extra %}{% endblock %}
+  <style>
+    html.dark {
+      --el-color-primary: #58a6ff;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--el-bg-color-page);
+      background-image:
+        radial-gradient(ellipse 120% 80% at 50% -30%, rgba(88, 166, 255, 0.12), transparent 55%),
+        linear-gradient(180deg, var(--el-bg-color-page) 0%, #060606 100%);
+      color: var(--el-text-color-primary);
+    }
+
+    .ep-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      height: 56px;
+      box-sizing: border-box;
+      background: rgba(20, 20, 20, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--el-border-color);
+      box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .ep-topbar__title {
+      font-weight: 650;
+      font-size: 16px;
+      letter-spacing: 0.02em;
+      color: var(--el-text-color-primary);
+    }
+
+    .ep-main {
+      padding: 40px 28px 72px;
+      max-width: 1400px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    /* 页面内各板块纵向间距（仓库列表、登录等根节点加 class="ep-page"） */
+    .ep-page {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .ep-page--login {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .ep-main a.el-link,
+    .ep-main .el-link {
+      font-weight: 500;
+    }
+
+    code {
+      font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.86em;
+      padding: 0.12em 0.45em;
+      border-radius: 6px;
+      background: var(--el-fill-color);
+      border: 1px solid var(--el-border-color-lighter);
+      color: var(--el-color-primary);
+    }
+  </style>
+</head>
+
+<body>
+  {% set flash_pairs = get_flashed_messages(with_categories=true) %}
+  <script type="application/json" id="flash-page-data">{{ flash_pairs | tojson }}</script>
+
+  <header class="ep-topbar">
+    <span class="ep-topbar__title">GitHub 仓库 管理</span>
+    {% block nav_actions %}{% endblock %}
+  </header>
+
+  <main class="ep-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.38/dist/vue.global.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.8/dist/index.full.min.js" crossorigin="anonymous"></script>
+  <script>
+    (function () {
+      var el = document.getElementById('flash-page-data');
+      if (!el) return;
+      var raw;
+      try {
+        raw = JSON.parse(el.textContent);
+      } catch (e) {
+        return;
+      }
+      if (!raw || !raw.length) return;
+      function run() {
+        if (typeof ElementPlus === 'undefined' || !ElementPlus.ElMessage) return;
+        raw.forEach(function (pair) {
+          var cat = pair[0], text = pair[1];
+          var t = ({ success: 'success', danger: 'error', warning: 'warning', info: 'info', secondary: 'info' })[cat] || 'info';
+          ElementPlus.ElMessage({ type: t, message: text, duration: 5200, showClose: true });
+        });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+      else run();
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+{# Vue 根模板；整段 raw，避免 Jinja 误解析 {{ }} #}
+{% raw %}
+<div class="ep-page">
+  <el-alert v-if="classicWarn" type="warning" :closable="false" show-icon :title="classicWarn" />
+  <el-card shadow="hover" class="ep-repos-toolbar">
+    <el-row :gutter="20">
+      <el-col :xs="24" :sm="8">
+        <span class="ep-label">列表排序（服务端）</span>
+        <el-select v-model="sortMode" style="width:100%" @change="applyFilter">
+          <el-option label="最近更新时间" value="updated" />
+          <el-option label="全名 ASCII 序" value="ascii" />
+        </el-select>
+      </el-col>
+      <el-col :xs="24" :sm="8">
+        <span class="ep-label">删除范围</span>
+        <div class="ep-toolbar-switch-wrap">
+          <el-switch v-model="forbidNonFork" active-text="禁止删除非 fork" @change="applyFilter" />
+        </div>
+      </el-col>
+      <el-col :xs="24" :sm="8">
+        <span class="ep-label">统计与刷新</span>
+        <div class="ep-toolbar-meta">
+          <el-text type="info" size="small" class="ep-toolbar-stat">共 {{ total }} 个 · {{ sortHint }}</el-text>
+          <el-button size="small" type="primary" plain title="重新从 GitHub 获取最新仓库列表" @click="applyFilter">刷新列表</el-button>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="ep-tip ep-tip--toolbar">表头可点击排序（客户端）</div>
+    <template v-if="total > 0">
+      <el-divider content-position="left" class="ep-repos-toolbar-divider">批量操作</el-divider>
+      <el-space wrap :size="14">
+        <el-button @click="toggleForkSelection">{{ forkToggleLabel }}</el-button>
+        <el-button type="danger" @click="openDeleteDialog">删除选中</el-button>
+      </el-space>
+    </template>
+  </el-card>
+  <template v-if="total > 0">
+    <el-card shadow="never">
+      <el-table ref="tableRef" :data="repos" row-key="full_name" stripe style="width:100%"
+        @selection-change="handleSelectionChange" :row-class-name="rowClassName">
+        <el-table-column type="selection" width="48" :selectable="rowSelectable" />
+        <el-table-column label="仓库" prop="full_name" sortable :sort-method="sortByName">
+          <template #default="scope">
+            <el-link :href="'https://github.com/' + scope.row.full_name" target="_blank" rel="noopener noreferrer"
+              type="primary">{{ scope.row.full_name }}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column label="私有" prop="private" width="88" align="center" sortable :sort-method="sortByPrivate">
+          <template #default="scope">{{ scope.row.private ? '是' : '否' }}</template>
+        </el-table-column>
+        <el-table-column label="Fork" prop="fork" width="88" align="center" sortable :sort-method="sortByFork">
+          <template #default="scope">{{ scope.row.fork ? '是' : '否' }}</template>
+        </el-table-column>
+        <el-table-column label="归档" prop="archived" width="88" align="center" sortable :sort-method="sortByArchived">
+          <template #default="scope">{{ scope.row.archived ? '是' : '否' }}</template>
+        </el-table-column>
+        <el-table-column label="说明" min-width="200" sortable :sort-method="sortByDesc" show-overflow-tooltip>
+          <template #default="scope">{{ descText(scope.row) }}</template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+    <el-dialog v-model="dialogVisible" title="确认删除" width="480px" destroy-on-close @closed="confirmText = ''">
+      <p class="ep-danger">删除后无法恢复。将删除以下仓库：</p>
+      <ul class="ep-pending">
+        <li v-for="r in multipleSelection" :key="r.full_name">{{ r.full_name }}</li>
+      </ul>
+      <el-input v-model="confirmText" placeholder="请输入大写 DELETE" clearable autocomplete="off" />
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="danger" :disabled="confirmText !== 'DELETE'" @click="submitDelete">确认删除</el-button>
+      </template>
+    </el-dialog>
+  </template>
+  <el-empty v-else description="暂无仓库或加载失败" />
+</div>
+{% endraw %}

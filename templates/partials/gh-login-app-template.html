@@ -1,0 +1,46 @@
+{# 纯 Vue/Element 片段，供 login.html 中 text/x-template 引用；勿写 {{ }}，以免与 Jinja 冲突 #}
+<div class="ep-page--login">
+<el-row :gutter="36" justify="center">
+  <el-col :xs="24" :md="11" :lg="10">
+    <el-card shadow="hover" class="login-card">
+      <template #header><span style="font-weight:600">连接 GitHub</span></template>
+      <p class="ep-muted">使用 Personal Access Token 访问仓库列表；删除需额外权限，见右侧说明。</p>
+      <el-form @submit.prevent="submitLogin" label-position="top">
+        <el-form-item label="Personal Access Token">
+          <el-input v-model="token" type="password" show-password size="large" placeholder="ghp_… 或 github_pat_…" clearable autocomplete="off" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" size="large" style="width:100%" native-type="submit">登录并加载仓库</el-button>
+        </el-form-item>
+        <p class="ep-hint">输入框为密码样式，降低被旁人窥屏风险。</p>
+      </el-form>
+    </el-card>
+  </el-col>
+  <el-col :xs="24" :md="13" :lg="14" class="ep-login-right">
+    <el-card shadow="hover">
+      <template #header><span style="font-weight:600">如何获取 Token</span></template>
+      <p class="ep-muted">任选一种令牌类型；删除仓库必须包含对应权限。</p>
+      <h4 class="ep-h4">Classic（经典）令牌</h4>
+      <ol class="ep-ol">
+        <li>打开 <el-link href="https://github.com/settings/tokens" target="_blank" type="primary">GitHub → Settings → Developer settings → Tokens (classic)</el-link>，点击 <strong>Generate new token (classic)</strong>。</li>
+        <li>勾选 <code>repo</code>，并<strong>单独勾选</strong> <code>delete_repo</code>（仅 <code>repo</code> 不含删除权限）。</li>
+        <li>生成后<strong>立即复制</strong>保存。</li>
+      </ol>
+      <h4 class="ep-h4">Fine-grained（细粒度）令牌</h4>
+      <ol class="ep-ol">
+        <li>打开 <el-link href="https://github.com/settings/personal-access-tokens/new" target="_blank" type="primary">Generate new fine-grained token</el-link>。</li>
+        <li>在 Repository permissions 中将 <strong>Administration</strong> 设为 <strong>Read and write</strong>。</li>
+      </ol>
+    </el-card>
+    <el-divider class="ep-login-divider" />
+    <el-alert type="info" title="安全提示" :closable="false" show-icon>
+      <ul class="ep-ul">
+        <li>令牌等效于密码，勿提交到 Git、勿随意外传。</li>
+        <li>Token 保存在服务器会话中，请勿在公共设备使用；用毕请退出登录。</li>
+        <li>仅在可信网络访问；远程部署请使用 HTTPS 并保管 FLASK_SECRET_KEY。</li>
+        <li>遵循最小权限，完成后可撤销或轮换 Token。</li>
+      </ul>
+    </el-alert>
+  </el-col>
+</el-row>
+</div>

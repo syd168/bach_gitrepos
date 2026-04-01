@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}登录 — GitHub 仓库管理{% endblock %}
+{% block head_extra %}
+<style>
+  .ep-login-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  /* 分割「如何获取 Token」与「安全提示」，避免两块贴在一起 */
+  .ep-login-divider {
+    margin: 28px 0 24px;
+  }
+  #app-login .login-card.el-card {
+    border-radius: 12px;
+    border: 1px solid var(--el-border-color-light);
+    box-shadow: var(--el-box-shadow-light);
+  }
+  .login-card .ep-muted { color: var(--el-text-color-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 16px; }
+  .ep-h4 { font-size: 13px; font-weight: 600; margin: 18px 0 10px; color: var(--el-text-color-primary); letter-spacing: 0.02em; }
+  .ep-ol { padding-left: 1.25rem; font-size: 13px; line-height: 1.8; color: var(--el-text-color-regular); }
+  .ep-ol li { margin-bottom: 10px; }
+  .ep-ul { margin: 0; padding-left: 1.25rem; font-size: 13px; line-height: 1.75; color: var(--el-text-color-secondary); }
+  .ep-hint { font-size: 12px; color: var(--el-text-color-placeholder); margin-top: -6px; }
+</style>
+{% endblock %}
+{% block content %}
+{# 用普通 HTML 文件写 Vue 模板，编辑器可高亮；Vue 通过 selector #gh-login-app-template 读取 #}
+<script type="text/x-template" id="gh-login-app-template">
+{% include 'partials/gh-login-app-template.html' %}
+</script>
+<div id="app-login"></div>
+{% endblock %}
+{% block scripts %}
+<script type="application/json" id="login-page-data">{{ { "loginUrl": url_for('login') } | tojson }}</script>
+<script src="{{ url_for('static', filename='js/gh-login.js') }}"></script>
+<script>
+  (function () {
+    var cfg = JSON.parse(document.getElementById('login-page-data').textContent);
+    mountLoginPage({ loginUrl: cfg.loginUrl, el: '#app-login' });
+  })();
+</script>
+{% endblock %}

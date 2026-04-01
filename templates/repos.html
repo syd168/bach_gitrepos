@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}仓库列表 — GitHub 仓库管理{% endblock %}
+{% block head_extra %}
+<style>
+  .ep-label { display: block; font-size: 12px; color: var(--el-text-color-secondary); margin-bottom: 8px; }
+  .ep-tip { font-size: 12px; color: var(--el-text-color-placeholder); line-height: 1.45; }
+  /* 顶部工具条：三列等宽标签对齐，统计与开关垂直对齐下拉框 */
+  .ep-repos-toolbar .el-card__body {
+    padding-bottom: 20px;
+  }
+  .ep-toolbar-switch-wrap {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+  }
+  .ep-toolbar-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    min-height: 32px;
+  }
+  .ep-toolbar-stat {
+    line-height: 1.5;
+  }
+  .ep-tip--toolbar {
+    margin-top: 16px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--el-fill-color-light);
+    border: 1px solid var(--el-border-color-lighter);
+  }
+  .ep-repos-toolbar-divider {
+    margin: 18px 0 14px;
+  }
+  /* 与 Element Plus 变量一致：fork 行仅浅色底，无额外装饰线 */
+  .el-table .row-fork > td {
+    background-color: var(--el-color-primary-light-9) !important;
+  }
+  .el-table .row-blocked > td {
+    background-color: var(--el-fill-color-light) !important;
+  }
+  .ep-danger { margin-bottom: 12px; }
+  .ep-pending { margin: 0 0 16px; padding-left: 1.2rem; font-size: 13px; line-height: 1.65; }
+</style>
+{% endblock %}
+{% block nav_actions %}
+<form method="post" action="{{ url_for('logout') }}" style="display:inline;margin:0">
+  <button type="submit" class="el-button el-button--primary is-plain el-button--small">退出登录</button>
+</form>
+{% endblock %}
+{% block content %}
+<script type="application/json" id="repos-page-data">{{ {
+  "repos": repos,
+  "sort_mode": sort_mode,
+  "forbid_non_fork": forbid_non_fork,
+  "classic_warn": classic_warn or '',
+  "total": total,
+  "sort_hint": sort_hint or '',
+  "urls": {
+    "repos": url_for('repos'),
+    "delete_repos": url_for('delete_repos'),
+    "logout": url_for('logout')
+  }
+} | tojson }}</script>
+<script type="text/x-template" id="gh-repos-app-template">
+{% include 'partials/gh-repos-app-template.html' %}
+</script>
+<div id="app-repos"></div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/gh-repos.js') }}"></script>
+<script>
+  (function () {
+    var el = document.getElementById('repos-page-data');
+    var cfg = JSON.parse(el.textContent);
+    mountReposPage(Object.assign(cfg, { el: '#app-repos' }));
+  })();
+</script>
+{% endblock %}
