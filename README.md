@@ -6,6 +6,8 @@
 
 本项目**以 MIT 许可证开源**（见仓库根目录 [`LICENSE`](LICENSE)），可自由使用、修改与再分发；**软件按「原样」提供，不含任何明示或默示担保**（详见许可证全文）。
 
+**仓库主页**：[github.com/syd168/bach_gitrepos](https://github.com/syd168/bach_gitrepos)
+
 ## 功能概览
 
 - **登录**：使用 PAT 登录，服务端调用 `GET /user` 校验令牌。
@@ -26,8 +28,8 @@
 ## 安装
 
 ```bash
-git clone https://github.com/<你的用户名>/del_github_reposities.git
-cd del_github_reposities
+git clone https://github.com/syd168/bach_gitrepos.git
+cd bach_gitrepos
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -99,7 +101,7 @@ templates/
 
 ## 开源与贡献
 
-- **许可证**：[MIT License](LICENSE) — Copyright (c) 2026 del_github_reposities contributors。你可以在遵守 MIT 条款的前提下使用、复制、修改与分发本软件；**版权声明与许可文本需保留在副本中**。
+- **许可证**：[MIT License](LICENSE) — Copyright (c) 2026 syd168。你可以在遵守 MIT 条款的前提下使用、复制、修改与分发本软件；**版权声明与许可文本需保留在副本中**。
 - **参与贡献**：请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)（Issue/PR 约定、代码风格、许可说明）。
 - **安全问题**：请勿在公开 Issue 中披露可利用细节；请按 [SECURITY.md](SECURITY.md) 说明联系。
 
